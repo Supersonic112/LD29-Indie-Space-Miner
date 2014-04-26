@@ -2,6 +2,7 @@ require "graphics"
 require "game"
 require "controls"
 require "tiletypes"
+require "objecttypes"
 
 love.ism = {}
 
