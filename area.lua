@@ -18,7 +18,7 @@ function getArea(sizeX, sizeY)
 			t.map[i] = {}
 			for j=1,t.lengthY do
 				if i==1 or j ==1 or i ==t.lengthX or j == t.lengthY then
-					t.map[i][j] = tiles.getTile(1)
+					t.map[i][j] = tiles.getTile(5)
 				else
 					t.map[i][j] = tiles.getTile(3)
 				end
@@ -35,10 +35,11 @@ function getArea(sizeX, sizeY)
 	end	
 	
 	t.getObjects = function(posX, posY)
-		return objects.getFromPosition(posX,posY)--t.objMap[posX][posY]
+		return objects.getFromPosition(posX,posY)
 	end
 	
 	t.init = function(sizeX, sizeY)
+		objects.resetList()
 		t.createMap(sizeX, sizeY)
 		t.buildArea()
 	end
@@ -47,9 +48,9 @@ function getArea(sizeX, sizeY)
 		for i=1,t.lengthX do
 			for j=1,t.lengthY do
 				if i==1 or j ==1 or i ==t.lengthX or j == t.lengthY then
-					t.map[i][j] = tiles.getTile(1)
+					t.map[i][j] = tiles.getTile(5)
 				else
-					t.map[i][j] = tiles.getTile(love.math.random(2,4))
+					t.map[i][j] = tiles.getTile(love.math.random(3,4))
 				end
 			end
 		end
@@ -58,11 +59,42 @@ function getArea(sizeX, sizeY)
 	
 	t.addResources = function()
 		--determine amount of each resource to be spread
-		local resIron = 0.5*t.resourcePercentage
-		local resBronze = 0.3*t.resourcePercentage
-		local resGold = 0.1*t.resourcePercentage
-		local resPlatinum = 0.05*t.resourcePercentage
-		--TODO: add ore objects to game world
+		local resIron = love.math.random(1,1000)/100*t.resourcePercentage
+		local resBronze = love.math.random(1,500)/100*t.resourcePercentage
+		local resGold = love.math.random(1,200)/100*t.resourcePercentage
+		local resPlatinum = love.math.random(1,150)/100*t.resourcePercentage
+		-- adding ore objects to game world
+		for i = 1, #t.map do
+			for j = 1, #t.map[1] do
+				if not (i <= 4 and j <= 4 or i==1 or i == t.lengthX or j ==1 or j == t.lengthY) and love.math.random(1,100)>10 then
+					local r = love.math.random(1,t.lengthX*t.lengthY)
+					local drops = {}
+					--adding rubble
+					if love.math.random(1,4) == 1 then
+						drops[1]=objects.addObject(love.math.random(11,12),false,"rubble",i,j,true, false, nil, false, 0)
+					end
+					--print("adding resources, "..resIron)
+					if r >= resIron then
+						for l = 1, math.floor(love.math.random(1,10)/6)+1 do
+							drops[#drops+1] = objects.addObject(7,false, "iron_drop", i, j, true, false, nil, true, 10)
+						end
+					elseif r >= resBronze then
+						for l = 1, math.floor(love.math.random(1,100)/75)+1 do
+							drops[#drops+1] = objects.addObject(8,false, "bronze_drop", i, j, true, false, nil, true, 50)
+						end
+					elseif r >= resGold then
+						for l = 1, math.floor(love.math.random(1,100)/80)+1 do
+							drops[#drops+1] = objects.addObject(9,false, "gold_drop", i, j, true, false, nil, true, 250)
+						end
+					elseif r >= resPlatinum then
+						for l = 1, math.floor(love.math.random(1,100)/80)+1 do
+							drops[#drops+1] = objects.addObject(9,false, "gold_drop", i, j, true, false, nil, true, 250)
+						end
+					end
+					objects.addObject(love.math.random(5,6), true, "wall", i,j,false,true,drops)
+				end
+			end
+		end
 	end
 	
 	t.playerInteract = function()
@@ -73,9 +105,25 @@ function getArea(sizeX, sizeY)
 				return
 			else
 				for _,i in pairs(k) do
-					if i.mineable then
-						print("trying to interact")
+					if i.canBeMined then
+						--print("trying to interact")
 						i.mine()
+					end
+				end
+			end
+	end
+	
+	t.playerPassiveInteract = function()
+		local v = objects.getPlayer()
+		local k = t.getObjects(v.posX, v.posY)
+			if k ~= nil then --and #k>0 then
+				--print("found something to collect, "..#k)--..k[1].name)
+				for _,i in pairs(k) do
+					if i.canBeCollected and i.visible then
+					print (i.objectNo..", "..tostring(i.visible))
+					--print (i.objectNo)
+						i.collect()
+					else
 					end
 				end
 			end
@@ -90,12 +138,12 @@ function getArea(sizeX, sizeY)
 				return true
 			else
 				for _,i in pairs(k) do
-					if not i.passable then
+					if i.visible and not i.passable then
 						return false
 					end
 				end
 			end
-		return true
+			return true
 		end
 	end
 	

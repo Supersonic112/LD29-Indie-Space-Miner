@@ -3,6 +3,7 @@ function getGraphicsObject()
 	t.showFps = true
 	
 	t.initDrawing = function()
+		--if not love.ism.gameState == love.ism.gameStates[pause] then
 		t.dt = love.timer.getTime()
 		t.scrollingOffsetX = 0
 		t.scrollingOffsetY = 0
@@ -22,6 +23,7 @@ function getGraphicsObject()
 			end
 			love.graphics.setCanvas()
 		end
+		--end
 	end
 	
 	function love.draw()
@@ -32,6 +34,14 @@ function getGraphicsObject()
 		elseif love.ism.gameState == 1 then --main menu
 			love.graphics.setFont(love.ism.mainMenuFont)
 			love.graphics.print("LD 29 - Independent Space Miner", 50,50)--love.ism.screenwidth/2-120, love.ism.screenheight/10)
+			love.graphics.setFont(love.graphics.newFont(15))
+			love.graphics.print("press '1' to start", 50,200)
+			love.graphics.print("press '2' to load (NYI)", 50,225)
+			love.graphics.print("press '3' to show high scores (NYI)", 50,250)
+			love.graphics.print("press 'esc' to quit", 50,275)
+		elseif love.ism.gameState == 6 then
+			love.graphics.setFont(love.graphics.newFont(20))
+			love.graphics.print("PAUSE, press 'p' to continue",love.window.getWidth()/3, 100)
 		end
 		if t.showFps then
 			love.graphics.setFont(love.graphics.newFont(10))
@@ -41,11 +51,16 @@ function getGraphicsObject()
 	
 	t.drawObjects = function()
 		if objects.list ~= nil then
-			for _, o in pairs(objects.list) do
-				if o.visible then
-					love.graphics.draw(o.getObjectType().image, (o.graphicX+(t.scrollingOffsetX-1)*TILE_SIZE), (o.graphicY+(t.scrollingOffsetY-1)*TILE_SIZE))
+			for o in pairs(objects.list) do
+				if objects.list[o].visible and not (o == 2) then
+					--print("object name:"..o)
+					love.graphics.draw(
+					objects.getObjectImage(objects.list[o]), (objects.list[o].graphicX+(t.scrollingOffsetX-1)*TILE_SIZE), (objects.list[o].graphicY+(t.scrollingOffsetY-1)*TILE_SIZE))
+					--objecttypes.getObjectImage(objects.list[o].objectType.objectTypeNo), (objects.list[o].graphicX+(t.scrollingOffsetX-1)*TILE_SIZE), (objects.list[o].graphicY+(t.scrollingOffsetY-1)*TILE_SIZE))
 				end
 			end
+			love.graphics.draw(objects.getObjectImage(objects.list[2]), (objects.list[2].graphicX+(t.scrollingOffsetX-1)*TILE_SIZE), (objects.list[2].graphicY+(t.scrollingOffsetY-1)*TILE_SIZE))
+			--love.graphics.draw(objecttypes.getObjectImage(objects.list[2].objectType.objectTypeNo), (objects.list[2].graphicX+(t.scrollingOffsetX-1)*TILE_SIZE), (objects.list[2].graphicY+(t.scrollingOffsetY-1)*TILE_SIZE))
 		end
 	end
 	return t

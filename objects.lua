@@ -3,27 +3,60 @@ require "objecttypes"
 objects = {}
 objects.list = {}
 TILE_SIZE = 64
+objects.status = {idle = 1, walking = 2, mining = 3}
 
 function objects.getObject(id)
 	return objects.list[id]
 end
 
-function objects.addObject(objType, objVisible, objName, xPos, yPos, passability, canBeMined, drops)
+function objects.addObject(objType, objVisible, objName, xPos, yPos, passability, canBeMined, drops, canBeCollected, points, constitution)
 	local t = {}
 	t.objectNo = #objects.list+1
 	t.objectType = objecttypes.list[objType]--getObjectType(objType)
+	t.objectTypeNo = objType
 	t.visible = objVisible
 	t.name = objName
 	t.drops = drops
+	if not constitution then t.maxConst = 100 else t.maxConst = constitution end
+	t.curConst = t.maxConst
+	t.status = objects.status["idle"]
+	t.canBeCollected = canBeCollected or false
+	if points == nil or not t.canBeCollected then
+		t.points = 0
+		t.collect = function()
+			return false
+		end
+	else 
+		t.points = points
+		t.collect = function()
+			if t.visible then
+				love.ism.game.modifyScore(t.points)
+				t.visible = false
+			end
+		end
+	end
+	t.activeImage = 1
+	t.setActiveImage = function(newActive)
+		if #t.objectType.image >= newActive then
+			t.activeImage = newActive
+		else
+			print("this image does not exist")
+		end
+	end
 	t.facingDirection = {1,0} -- field at which the object looks in relation to its position
-	t.mineable = canBeMined or false
-	if t.mineable then
+	t.canBeMined = canBeMined or false
+	if t.canBeMined and t.visible then
 		t.mine = function()
-			t.visible = false
-			if t.drops then
+			if t.curConst > 0 then
+				t.curConst = t.curConst - 4
 				
 			else
-				objects.addObject(7,true, "iron_drop", t.posX, t.posY, true, false, nil)--workaround for now
+				t.visible = false
+				if t.drops ~= nil then
+					for _,dr in pairs(t.drops) do
+						objects.getObject(dr).visible = true
+					end
+				end
 			end
 		end
 	else
@@ -44,6 +77,7 @@ function objects.addObject(objType, objVisible, objName, xPos, yPos, passability
 	t.graphicX, t.graphicY = xPos*TILE_SIZE, yPos*TILE_SIZE
 	t.destX, t.destY = xPos, yPos
 	objects.list[t.objectNo] = t
+	return t.objectNo
 end
 
 function objects.changePosition(objectId, dX, dY)
@@ -80,11 +114,15 @@ function objects.deltaMove(deltaTime)
 		--end
 	end
 end
-	
+
+function objects.getObjectImage(obj)
+	return objecttypes.getObjectTypeImage(obj.objectTypeNo,obj.activeImage)
+end
+
 function objects.getFromPosition(x,y)
 	local t = {}
 	for _,i in pairs(objects.list) do
-		if i.posY == y and i.posX == x then
+		if i.posY == y and i.posX == x and i.objectNo>2 and i.visible then
 			t[#t]=i
 		end
 	end
@@ -109,7 +147,9 @@ function objects.getFromName(name)
 end
 
 function objects.resetList()
-	objects.list = {}
+	for k in pairs(objects.list) do
+		objects.list[k] = nil
+	end
 	-- adding 'constant' objects
 	objects.addObject(1, false, "nothing", 1, 1, true, false)
 	objects.addObject(2, true, "player", 2, 2, true, false)
@@ -117,6 +157,5 @@ end
 
 -- adding objects manually for now
 objects.addObject(1, false, "nothing", 1, 1, true, false)
-objects.addObject(2, true, "player", 2, 2, true, false)
+objects.addObject(objecttypes.typelist["player"], true, "player", 2, 2, true, false)
 objects.addObject(5, true, "wall1", 3, 2, false, true)
-objects.addObject(5, true, "wall1", 6, 3, false, true)

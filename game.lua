@@ -2,7 +2,7 @@ require "area"
 function getGame()
 	local t = {}
 	t.area = getArea()
-	t.area.changeMapSize(12,10)
+	t.area.changeMapSize(13,10)
 	t.score = 0
 	
 	-- game control logic
@@ -10,6 +10,9 @@ function getGame()
 		t.moveObj("player", dX, dY)
 	end
 	
+	t.modifyScore = function(dSc)
+		t.score = t.score+dSc
+	end
 	t.moveObj = function(objectIdentifier, dX, dY)
 		objects.changePosition(objectIdentifier, dX, dY)
 	end

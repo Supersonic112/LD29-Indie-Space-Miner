@@ -9,15 +9,16 @@ TILE_SIZE = 64
 dtotal = 0
 
 function love.load()
-	love.ism.mainMenuFont = love.graphics.newFont(16) -- a custom font will be added as soon as I found a good one
+	love.ism.mainMenuFont = love.graphics.newFont(25) -- a custom font will be added as soon as I found a good one
 	love.ism.reload()
-end
-
-function love.run()
-	love.ism.gameStates = {initialization = 0, main_menu = 1, in_game = 2, game_over = 3, cutscene = 4, intro = 5, pause = 6}
+	print(type({1,2,3}))
+	love.ism.gameStates = {initialization = 0, main_menu = 1, in_game = 2, game_over = 3, cutscene = 4, intro = 5, pause = 6, unpause = 7}
 	love.ism.gameState = love.ism.gameStates["initialization"]
 	love.ism.pauseState = 1
 	love.ism.game = getGame()
+end
+
+function love.run()
 	if love.math then
 		love.math.setRandomSeed(os.time())
 		for i = 1, 50 do
@@ -31,8 +32,7 @@ function love.run()
 	if love.load then love.load(arg) end
 	if love.timer then love.timer.step() end
 	local dt = 0
-	love.ism.setGameState("in_game")
-	
+	love.ism.setGameState("in_game")	
 	--main loop
 	while true do
 		if love.event then
@@ -64,13 +64,23 @@ function love.run()
 	end
 end
 
+function love.ism.restartGame()
+	love.ism.setGameState(1)
+	love.ism.game = getGame()
+	love.ism.reload()
+	objects.resetList()
+end
+
 function love.update(dt)
 	--local deltaTime = love.timer.getTime()-dtotal
 	dtotal = dtotal + dt
-	if dtotal >= 0.05 then
+	if dtotal >= 0.05 and love.ism.gameState == love.ism.gameStates["in_game"] then
 		dtotal = dtotal - 0.05
 		objects.deltaMove(deltaTime)
 		--print (dtotal)
+		executeKeyActions()
+		love.ism.game.area.playerPassiveInteract()
+	elseif dtotal >=0.1 then
 		executeKeyActions()
 	end
 end
@@ -81,11 +91,20 @@ end
 
 function love.ism.setGameState(newGameState)
 	if type(newGameState)=="string" then
-		love.ism.gameState = love.ism.gameStates[newGameState]
-	elseif type(newGameState)=="number" and newGameState > 0 and newGameState <= 5 then
-		love.ism.gameState = newGameState
+		love.ism.setGameState(love.ism.gameStates[newGameState])
+		print("game state:")
+	elseif type(newGameState)=="number" and newGameState > 0 and newGameState <= 7 then
+		print(love.ism.gameState)
+		if newGameState == love.ism.gameStates["pause"] then
+			love.ism.pauseState = love.ism.gameState
+			love.ism.gameState = newGameState
+		elseif newGameState == love.ism.gameStates["unpause"] then
+			love.ism.gameState = love.ism.pauseState
+		else
+			love.ism.gameState = newGameState
+			love.ism.gameStateChanged()
+		end
 	end
-	love.ism.gameStateChanged()
 end
 
 -- this function makes sure that everything mentioned inside is notified if the game state changes
