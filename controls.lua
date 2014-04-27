@@ -36,7 +36,7 @@ function executeKeyActions() -- depends on love.update(dt)
 			love.ism.game.movePlayer(1,0)
 		end
 		if love.keyboard.isDown('rctrl') or love.keyboard.isDown('lctrl') then
-			love.ism.game.area.playerInteract() -- use drill
+			love.ism.game.area.playerInteract() -- use drill, this is called as long as ctrl is pressed
 		end
 		if love.keyboard.isDown('a') then
 			love.ism.graphics.scrollingOffsetX = love.ism.graphics.scrollingOffsetX - 1
