@@ -5,11 +5,12 @@ require "tiletypes"
 require "objecttypes"
 
 love.ism = {}
+TILE_SIZE = 64
+dtotal = 0
 
 function love.load()
 	love.ism.mainMenuFont = love.graphics.newFont(16) -- a custom font will be added as soon as I found a good one
 	love.ism.reload()
-	love.ism.setGameState("in_game")
 end
 
 function love.run()
@@ -30,6 +31,7 @@ function love.run()
 	if love.load then love.load(arg) end
 	if love.timer then love.timer.step() end
 	local dt = 0
+	love.ism.setGameState("in_game")
 	
 	--main loop
 	while true do
@@ -62,8 +64,19 @@ function love.run()
 	end
 end
 
-function love.update()
+function love.update(dt)
+	--local deltaTime = love.timer.getTime()-dtotal
+	dtotal = dtotal + dt
+	if dtotal >= 0.05 then
+		dtotal = dtotal - 0.05
+		objects.deltaMove(deltaTime)
+		--print (dtotal)
+		executeKeyActions()
+	end
+end
 
+function math.normalize(x,y)
+	local l=(x*x+y*y)^.5 if l==0 then return 0,0,0 else return x/l,y/l,l end
 end
 
 function love.ism.setGameState(newGameState)

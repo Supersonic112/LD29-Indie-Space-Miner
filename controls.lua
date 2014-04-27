@@ -1,37 +1,43 @@
-function love.keypressed(key)
-	if key == 'escape' then
+love.keyboard.setKeyRepeat(true)
+--function love.keypressed(key) -- depends on system settings for key repeat speed
+function executeKeyActions() -- depends on love.update(dt)
+	--old: if key == 'escape' then ...
+	if love.keyboard.isDown('escape') then
 		love.event.quit()
 	end
-	if key == '1' then
+	if love.keyboard.isDown('1') then
 		love.ism.setGameState(1)
-	elseif key == '2' then
+	elseif love.keyboard.isDown('2') then
 		love.ism.setGameState(2)
 	end
-	if key == 'up' then
+	if love.keyboard.isDown('up') then
 		love.ism.game.movePlayer(0,-1)
 	end
-	if key == 'down' then
+	if love.keyboard.isDown('down') then
 		love.ism.game.movePlayer(0,1)
 	end
-	if key == 'left' then
+	if love.keyboard.isDown('left') then
 		love.ism.game.movePlayer(-1,0)
 	end
-	if key == 'right' then
+	if love.keyboard.isDown('right') then
 		love.ism.game.movePlayer(1,0)
 	end
-	if key == 'p' then
+	if love.keyboard.isDown('p') then
 		love.ism.setGameState(pause)
 	end
-	if key == 'a' then
+	if love.keyboard.isDown('rctrl') or love.keyboard.isDown('lctrl') then
+		love.ism.game.area.playerInteract() -- use drill
+	end
+	if love.keyboard.isDown('a') then
 		love.ism.graphics.scrollingOffsetX = love.ism.graphics.scrollingOffsetX - 1
 	end
-	if key == 'd' then
+	if love.keyboard.isDown('d') then
 		love.ism.graphics.scrollingOffsetX = love.ism.graphics.scrollingOffsetX + 1
 	end
-	if key == 's' then
+	if love.keyboard.isDown('s') then
 		love.ism.graphics.scrollingOffsetY = love.ism.graphics.scrollingOffsetY + 1
 	end
-	if key == 'w' then
+	if love.keyboard.isDown('w') then
 		love.ism.graphics.scrollingOffsetY = love.ism.graphics.scrollingOffsetY - 1
 	end
 end

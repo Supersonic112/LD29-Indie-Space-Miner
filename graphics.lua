@@ -3,7 +3,6 @@ function getGraphicsObject()
 	t.showFps = true
 	
 	t.initDrawing = function()
-		t.tileSize = 64
 		t.dt = love.timer.getTime()
 		t.scrollingOffsetX = 0
 		t.scrollingOffsetY = 0
@@ -27,7 +26,7 @@ function getGraphicsObject()
 	
 	function love.draw()
 		if love.ism.gameState == 2 then --in game
-			love.graphics.draw(t.mapCanvas,0+t.scrollingOffsetX*t.tileSize,0+t.scrollingOffsetY*t.tileSize)
+			love.graphics.draw(t.mapCanvas,0+t.scrollingOffsetX*TILE_SIZE,0+t.scrollingOffsetY*TILE_SIZE)
 			t.drawObjects()
 			love.graphics.print("Score: "..love.ism.game.score, 5,40)
 		elseif love.ism.gameState == 1 then --main menu
@@ -44,7 +43,7 @@ function getGraphicsObject()
 		if objects.list ~= nil then
 			for _, o in pairs(objects.list) do
 				if o.visible then
-					love.graphics.draw(o.getObjectType().image, (o.posX+t.scrollingOffsetX-1)*t.tileSize, (o.posY+t.scrollingOffsetY-1)*t.tileSize)
+					love.graphics.draw(o.getObjectType().image, (o.graphicX+(t.scrollingOffsetX-1)*TILE_SIZE), (o.graphicY+(t.scrollingOffsetY-1)*TILE_SIZE))
 				end
 			end
 		end

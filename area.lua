@@ -27,6 +27,10 @@ function getArea(sizeX, sizeY)
 	end
 	
 	t.getTile = function(posX, posY)
+		posX = math.floor(posX+0.5)
+		posY = math.floor(posY+0.5)
+		print(posX)
+		print(posY)
 		return t.map[posX][posY]
 	end	
 	
@@ -61,8 +65,20 @@ function getArea(sizeX, sizeY)
 		--TODO: add ore objects to game world
 	end
 	
-	t.playerInteract = function(posX, posY)
-		
+	t.playerInteract = function()
+		local v = objects.getPlayer()
+		local posX,posY = v.posX+v.facingDirection[1],v.posY+v.facingDirection[2]
+		local k = t.getObjects(posX, posY)
+			if k == nil then
+				return
+			else
+				for _,i in pairs(k) do
+					if i.mineable then
+						print("trying to interact")
+						i.mine()
+					end
+				end
+			end
 	end
 	
 	t.possibleMove = function(destX, destY)
@@ -71,7 +87,6 @@ function getArea(sizeX, sizeY)
 		else
 			local k = t.getObjects(destX,destY)
 			if k == nil then
-				print("Hey, it's empty")
 				return true
 			else
 				for _,i in pairs(k) do
