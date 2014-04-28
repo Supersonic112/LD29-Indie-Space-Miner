@@ -94,7 +94,7 @@ function objects.changePosition(objectId, dX, dY)
 		objects.changePosition(t.objectNo,dX,dY)
 	elseif type(objectId) == "number" then
 		objects.list[objectId].facingDirection = {dX,dY}
-		print("Looking at "..dX..", "..dY)
+		--print("Looking at "..dX..", "..dY)
 		if love.ism.game.area.possibleMove(objects.list[objectId].posX+dX, objects.list[objectId].posY+dY) then
 			objects.list[objectId].destX = objects.list[objectId].posX+dX
 			objects.list[objectId].destY = objects.list[objectId].posY+dY

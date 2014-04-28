@@ -33,7 +33,7 @@ function love.run()
 	if love.load then love.load(arg) end
 	if love.timer then love.timer.step() end
 	local dt = 0
-	love.ism.setGameState("in_game")	
+	love.ism.setGameState("main_menu")
 	--main loop
 	while true do
 		if love.event then
@@ -84,7 +84,7 @@ function love.update(dt)
 		--print (dtotal)
 		executeKeyActions()
 		love.ism.game.area.playerPassiveInteract()
-		if love.ism.game.area.caveIns >=4 then
+		if love.ism.game.area.caveIns >10 then
 			love.ism.setGameState(love.ism.gameStates["game_over"])
 		end
 	elseif dtotal >=0.2 then
@@ -99,9 +99,9 @@ end
 function love.ism.setGameState(newGameState)
 	if type(newGameState)=="string" then
 		love.ism.setGameState(love.ism.gameStates[newGameState])
-		print("game state:")
+		--print("game state:")
 	elseif type(newGameState)=="number" and newGameState > 0 and newGameState <= 7 then
-		print(love.ism.gameState)
+		--print(love.ism.gameState)
 		if newGameState == love.ism.gameStates["pause"] then
 			love.ism.pauseState = love.ism.gameState
 			love.ism.gameState = newGameState

@@ -18,7 +18,7 @@ function objecttypes.addObjectType(imgPath, objType, passability, graphicOffsetX
 	end
 	t.defaultPassable = passability
 	objecttypes.list[t.objectTypeNo] =t
-	print ("Object type added: "..t.objectTypeNo..", "..imgPath[1])
+	--print ("Object type added: "..t.objectTypeNo..", "..imgPath[1])
 end
 
 function objecttypes.getObjectType(typeNo)

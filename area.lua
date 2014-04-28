@@ -38,8 +38,6 @@ function getArea(sizeX, sizeY)
 	t.getTile = function(posX, posY)
 		posX = math.floor(posX+0.5)
 		posY = math.floor(posY+0.5)
-		print(posX)
-		print(posY)
 		return t.map[posX][posY]
 	end	
 	
@@ -166,16 +164,20 @@ function getArea(sizeX, sizeY)
 	
 	t.getCaveInDanger = function()
 		local pPosX, pPosY = objects.getPlayer().posX, objects.getPlayer().posY
-		if t.caveInMap[pPosX][pPosY]>10 then
-			return "harmless"
-		elseif t.caveInMap[pPosX][pPosY]>9 then
-			return "watch your step"
-		elseif t.caveInMap[pPosX][pPosY]>8 then
-			return "medium risk"
-		elseif t.caveInMap[pPosX][pPosY]>7 then
-			return "DANGER!"
+		if t.caveInState[pPosX][pPosY] then
+			if t.caveInState[pPosX][pPosY]>10 then
+				return "harmless"
+			elseif t.caveInState[pPosX][pPosY]>9 then
+				return "watch your step"
+			elseif t.caveInState[pPosX][pPosY]>8 then
+				return "medium risk"
+			elseif t.caveInState[pPosX][pPosY]>7 then
+				return "CAVE-IN IMMINENT!"
+			else
+				return "DANGER!"
+			end
 		else
-			return "unknown"
+			return "status unknown"
 		end
 	end
 	
@@ -184,11 +186,8 @@ function getArea(sizeX, sizeY)
 		t.caveIns = t.caveIns+1
 		if objects.getPlayer().posX ==x and objects.getPlayer().posY == y then
 			love.ism.setGameState(love.ism.gameStates["game_over"])
-		end
-		for _,obj in pairs(objectsList) do
-			if obj.objectType == 5 or obj.objectType == 6 then
-				obj.visible = true
-			end
+		else
+			objects.addObject(5, true, "wall", x, y, false, true)
 		end
 	end
 	

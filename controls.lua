@@ -10,8 +10,8 @@ function love.keypressed(key) -- only used for keys that should not be pressed f
 			love.ism.setGameState(1) -- go to main menu
 			love.ism.restartGame()
 		end
-	elseif key == '2' then
-		love.ism.setGameState(love.ism.gameStates["game_over"])
+	--elseif key == '2' then
+		--love.ism.setGameState(love.ism.gameStates["game_over"])
 		--load game
 	end
 	if key == 'p' then
