@@ -3,7 +3,7 @@ require "objecttypes"
 objects = {}
 objects.list = {}
 TILE_SIZE = 64
-objects.status = {idle = 1, walking = 2, mining = 3}
+objects.status = {idle = 1, walking1 = 2, walking2 = 3, mining1 = 4, mining2 = 5}
 
 function objects.getObject(id)
 	return objects.list[id]
@@ -49,7 +49,10 @@ function objects.addObject(objType, objVisible, objName, xPos, yPos, passability
 		t.mine = function()
 			if t.curConst > 0 then
 				t.curConst = t.curConst - 4
-				
+				if t.curConst <=50 then
+					t.setActiveImage(2)
+					love.ism.game.area.changeCaveInMap(t.posX, t.posY, love.ism.game.area.caveInStatus["damaged"])
+				end
 			else
 				t.visible = false
 				if t.drops ~= nil then
@@ -80,6 +83,9 @@ function objects.addObject(objType, objVisible, objName, xPos, yPos, passability
 	return t.objectNo
 end
 
+function objects.getPlayer()
+	return objects.list[2]
+end
 function objects.changePosition(objectId, dX, dY)
 	if type(objectId) == "string" then
 		local t = objects.getFromName(objectId)
@@ -100,6 +106,13 @@ function objects.deltaMove(deltaTime)
 	for _,o in pairs(objects.list) do
 		--if true then
 		if o.graphicX/64 ~= o.destX or o.graphicY/64 ~= o.destY then
+			if o.objectNo == 2 then
+				if objects.getPlayer().activeImage==2 then
+					objects.getPlayer().setActiveImage(3)
+				else
+					objects.getPlayer().setActiveImage(2)
+				end
+			end
 			o.graphicX,o.graphicY = (o.graphicX+(o.destX*64-o.graphicX)*0.2),(o.graphicY+(o.destY*64-o.graphicY)*0.2)
 			if o.destX*64-o.graphicX<32 then
 				o.posX = math.floor(o.graphicX/64+0.5)
@@ -107,6 +120,8 @@ function objects.deltaMove(deltaTime)
 			if o.destY*64-o.graphicY<32 then
 				o.posY = math.floor(o.graphicY/64+0.5)
 			end
+		else
+			objects.getPlayer().setActiveImage(1)
 		end
 		--else
 			--o.posX,o.posY = o.destX, o.destY
@@ -153,9 +168,11 @@ function objects.resetList()
 	-- adding 'constant' objects
 	objects.addObject(1, false, "nothing", 1, 1, true, false)
 	objects.addObject(2, true, "player", 2, 2, true, false)
+	objects.addObject(objecttypes.typelist["transport_elevator"], true, "elevator", 2, 2, true, false)
 end
 
 -- adding objects manually for now
 objects.addObject(1, false, "nothing", 1, 1, true, false)
 objects.addObject(objecttypes.typelist["player"], true, "player", 2, 2, true, false)
-objects.addObject(5, true, "wall1", 3, 2, false, true)
+objects.addObject(objecttypes.typelist["transport_elevator"], true, "elevator", 2, 2, true, false)
+--objects.addObject(5, true, "wall1", 3, 2, false, true) --wall test object

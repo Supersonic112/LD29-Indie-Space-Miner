@@ -1,10 +1,12 @@
 objecttypes = {}
 objecttypes.list = {}
-objecttypes.typelist = {nothing = 1, player = 2, asteroid_lander = 3, unknown = 4, rock1 = 5, rock2 = 6, iron = 7, bronze = 8, gold = 9, platinum = 10, rubble1 = 11, rubble2 = 12}
+objecttypes.typelist = {nothing = 1, player = 2, asteroid_lander = 3, unknown = 4, rock1 = 5, rock2 = 6, iron = 7, bronze = 8, gold = 9, platinum = 10, rubble1 = 11, rubble2 = 12, transport_elevator = 13}
 
-function objecttypes.addObjectType(imgPath, objType, passability)
+function objecttypes.addObjectType(imgPath, objType, passability, graphicOffsetX, graphicOffsetY)
 	local t = {}
 	t.image = {}
+	t.imageOffsetX = graphicOffsetX or 0
+	t.imageOffsetY = graphicOffsetY or 0
 	t.image[1] = love.graphics.newImage(imgPath[1])
 	for i in pairs(imgPath) do
 		t.image[i] = love.graphics.newImage(imgPath[i])
@@ -40,11 +42,12 @@ local charAnims = {"res/gfx/obj/char_d_idle.png", "res/gfx/obj/char_d1.png", "re
 objecttypes.addObjectType(charAnims, 2, true)
 objecttypes.addObjectType({"res/gfx/obj/asteroidLander.png"},3, false)
 objecttypes.addObjectType({"res/gfx/obj/unknown.png"},4, false)
-objecttypes.addObjectType({"res/gfx/obj/rock_ore_grey.png"},5, false)
-objecttypes.addObjectType({"res/gfx/obj/rock_ore_grey2.png"},6, false)
+objecttypes.addObjectType({"res/gfx/obj/rock_ore_grey1.png","res/gfx/obj/rock_ore_grey1_dark.png"},5, false)
+objecttypes.addObjectType({"res/gfx/obj/rock_ore_grey2.png","res/gfx/obj/rock_ore_grey2_dark.png"},6, false)
 objecttypes.addObjectType({"res/gfx/obj/ore_iron.png"},7, true)
 objecttypes.addObjectType({"res/gfx/obj/ore_bronze.png"},8, true)
 objecttypes.addObjectType({"res/gfx/obj/ore_gold.png"},9, true)
 objecttypes.addObjectType({"res/gfx/obj/ore_platinum.png"},10, true)
 objecttypes.addObjectType({"res/gfx/obj/rubble1.png"},11, true)
 objecttypes.addObjectType({"res/gfx/obj/rubble2.png"},12, true)
+objecttypes.addObjectType({"res/gfx/obj/transport_elevator_closed.png", "res/gfx/obj/transport_elevator.png"},13, true, 0, -64)

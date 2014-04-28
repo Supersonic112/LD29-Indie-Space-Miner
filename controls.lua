@@ -4,9 +4,15 @@ function love.keypressed(key) -- only used for keys that should not be pressed f
 		love.event.quit()
 	end
 	if key == '1' then
-		love.ism.setGameState(1)
+		if love.ism.gameState == 1 then
+			love.ism.setGameState(2)
+		else
+			love.ism.setGameState(1) -- go to main menu
+			love.ism.restartGame()
+		end
 	elseif key == '2' then
-		love.ism.setGameState(2)
+		love.ism.setGameState(love.ism.gameStates["game_over"])
+		--load game
 	end
 	if key == 'p' then
 		if love.ism.gameState ~= 6 then
@@ -36,6 +42,7 @@ function executeKeyActions() -- depends on love.update(dt)
 			love.ism.game.movePlayer(1,0)
 		end
 		if love.keyboard.isDown('rctrl') or love.keyboard.isDown('lctrl') then
+			objects.getPlayer().setActiveImage(4)
 			love.ism.game.area.playerInteract() -- use drill, this is called as long as ctrl is pressed
 		end
 		if love.keyboard.isDown('a') then

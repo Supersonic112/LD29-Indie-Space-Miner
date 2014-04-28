@@ -11,11 +11,12 @@ dtotal = 0
 function love.load()
 	love.ism.mainMenuFont = love.graphics.newFont(25) -- a custom font will be added as soon as I found a good one
 	love.ism.reload()
-	print(type({1,2,3}))
 	love.ism.gameStates = {initialization = 0, main_menu = 1, in_game = 2, game_over = 3, cutscene = 4, intro = 5, pause = 6, unpause = 7}
 	love.ism.gameState = love.ism.gameStates["initialization"]
 	love.ism.pauseState = 1
 	love.ism.game = getGame()
+	love.ism.titleScreen = love.graphics.newImage("res/gfx/obj/title_screen.png")
+	love.ism.highScores = {}
 end
 
 function love.run()
@@ -65,10 +66,13 @@ function love.run()
 end
 
 function love.ism.restartGame()
+	love.load()
+	objects.resetList()
 	love.ism.setGameState(1)
+	love.ism.game = nil
 	love.ism.game = getGame()
 	love.ism.reload()
-	objects.resetList()
+	love.ism.game.area.init()
 end
 
 function love.update(dt)
@@ -80,7 +84,10 @@ function love.update(dt)
 		--print (dtotal)
 		executeKeyActions()
 		love.ism.game.area.playerPassiveInteract()
-	elseif dtotal >=0.1 then
+		if love.ism.game.area.caveIns >=4 then
+			love.ism.changeGameState(love.ism.gameStates["game_over"])
+		end
+	elseif dtotal >=0.2 then
 		executeKeyActions()
 	end
 end
