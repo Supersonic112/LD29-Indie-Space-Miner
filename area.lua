@@ -150,13 +150,15 @@ function getArea(sizeX, sizeY)
 	end
 	
 	t.watchEnvironment = function()
-		
-		for i = 2, #t.caveInMap-1 do
-			for j = 2, #t.caveInMap-1 do
-				t.caveInState[i][j] = t.caveInMap[i][j]+t.caveInMap[i-1][j]+t.caveInMap[i+1][j]+t.caveInMap[i][j-1]+t.caveInMap[i][j+1]
-				if t.caveInState[i][j]<6 then
-					t.caveIn(i,j)
-				--elseif t.caveInState[i][j]<7 then
+		if t.caveInMap[1][1] ~= nil then
+			for i = 2, #t.caveInMap-1 do
+				for j = 2, #t.caveInMap[1]-1 do
+					--print(t.caveInMap[i][j+1])
+					t.caveInState[i][j] = t.caveInMap[i][j]+t.caveInMap[i-1][j]+t.caveInMap[i+1][j]+t.caveInMap[i][j-1]+t.caveInMap[i][j+1]
+					if t.caveInState[i][j]<6 then
+						t.caveIn(i,j)
+					--eleif t.caveInState[i][j]<7 then
+					end
 				end
 			end
 		end
@@ -183,7 +185,7 @@ function getArea(sizeX, sizeY)
 		if objects.getPlayer().posX ==x and objects.getPlayer().posY == y then
 			love.ism.setGameState(love.ism.gameStates["game_over"])
 		end
-		for obj in pairs(objectsList) do
+		for _,obj in pairs(objectsList) do
 			if obj.objectType == 5 or obj.objectType == 6 then
 				obj.visible = true
 			end

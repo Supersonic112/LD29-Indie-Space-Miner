@@ -29,7 +29,7 @@ function getGraphicsObject()
 			love.graphics.draw(t.mapCanvas,0+t.scrollingOffsetX*TILE_SIZE,0+t.scrollingOffsetY*TILE_SIZE)
 			t.drawObjects()
 			love.graphics.print("Score: "..love.ism.game.score, 5,40)
-			love.graphics.print("Cave-in danger: "..love.ism.game.area.getCaveInDanger(), 20, 40)
+			love.graphics.print("Cave-in danger: "..love.ism.game.area.getCaveInDanger(), 5, 80)
 		elseif love.ism.gameState == love.ism.gameStates["main_menu"] then
 			love.graphics.draw(love.ism.titleScreen)
 			love.graphics.setFont(love.ism.mainMenuFont)

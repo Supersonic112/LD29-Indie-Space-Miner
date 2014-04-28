@@ -85,7 +85,7 @@ function love.update(dt)
 		executeKeyActions()
 		love.ism.game.area.playerPassiveInteract()
 		if love.ism.game.area.caveIns >=4 then
-			love.ism.changeGameState(love.ism.gameStates["game_over"])
+			love.ism.setGameState(love.ism.gameStates["game_over"])
 		end
 	elseif dtotal >=0.2 then
 		executeKeyActions()

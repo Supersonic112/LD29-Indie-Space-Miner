@@ -51,10 +51,11 @@ function objects.addObject(objType, objVisible, objName, xPos, yPos, passability
 				t.curConst = t.curConst - 4
 				if t.curConst <=50 then
 					t.setActiveImage(2)
-					love.ism.game.area.changeCaveInMap(t.posX, t.posY, love.ism.game.area.caveInStatus["damaged"])
+					love.ism.game.area.changeCaveInMap(t.posX, t.posY, love.ism.game.area.caveInStatus["cracked"])
 				end
 			else
 				t.visible = false
+					love.ism.game.area.changeCaveInMap(t.posX, t.posY, love.ism.game.area.caveInStatus["broken"])
 				love.ism.game.area.watchEnvironment()
 				if t.drops ~= nil then
 					for _,dr in pairs(t.drops) do
