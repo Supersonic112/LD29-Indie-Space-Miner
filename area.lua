@@ -7,7 +7,8 @@ function getArea(sizeX, sizeY)
 	t.lengthX = sizeX or 6
 	t.lengthY = sizeY or 8
 	t.caveInMap = {} -- stability
-	t.caveInStatus = {reinforced = 5, stable = 4, cracked = 2, broken = 1}
+	t.caveInState = {}
+	t.caveInStatus = {special = 5, reinforced = 5, stable = 4, cracked = 2, broken = 1}
 	t.caveIns = 0
 	t.resourcePercentage = love.math.random(t.lengthX*t.lengthY*0.6,t.lengthX*t.lengthY)
 	t.changeMapSize = function(newLengthX,newLengthY)
@@ -20,10 +21,12 @@ function getArea(sizeX, sizeY)
 		for i = 1, t.lengthX do
 			t.map[i] = {}
 			t.caveInMap[i] = {}
+			t.caveInState[i] = {}
 			for j=1,t.lengthY do
 				if i==1 or j ==1 or i ==t.lengthX or j == t.lengthY then
 					t.map[i][j] = tiles.getTile(5)
 					t.caveInMap[i][j] = t.caveInStatus["reinforced"]
+					t.caveInState[i][j] = 10
 				else
 					t.map[i][j] = tiles.getTile(3)
 					t.caveInMap[i][j] = t.caveInStatus["stable"]
@@ -49,6 +52,7 @@ function getArea(sizeX, sizeY)
 		t.createMap(sizeX, sizeY)
 		t.buildArea()
 		t.caveIns = 0
+		t.watchEnvironment()
 	end
 	
 	t.buildArea = function()
@@ -101,7 +105,11 @@ function getArea(sizeX, sizeY)
 					objects.addObject(love.math.random(5,6), true, "wall", i,j,false,true,drops)
 					t.caveInMap[i][j] = t.caveInStatus["stable"]
 				else
+					if i<=4 and j<=4 then
+						t.caveInMap[i][j] = t.caveInStatus["special"]
+					else
 					t.caveInMap[i][j] = t.caveInStatus["broken"]
+					end
 				end
 			end
 		end
@@ -143,11 +151,41 @@ function getArea(sizeX, sizeY)
 	
 	t.watchEnvironment = function()
 		
-		for i = 1, #t.caveInMap do
-			for j = 1, #t.caveInMap do
-				if t.caveInMap[i][j]<3 then
-					
+		for i = 2, #t.caveInMap-1 do
+			for j = 2, #t.caveInMap-1 do
+				t.caveInState[i][j] = t.caveInMap[i][j]+t.caveInMap[i-1][j]+t.caveInMap[i+1][j]+t.caveInMap[i][j-1]+t.caveInMap[i][j+1]
+				if t.caveInState[i][j]<6 then
+					t.caveIn(i,j)
+				--elseif t.caveInState[i][j]<7 then
 				end
+			end
+		end
+	end
+	
+	t.getCaveInDanger = function()
+		local pPosX, pPosY = objects.getPlayer().posX, objects.getPlayer().posY
+		if t.caveInMap[pPosX][pPosY]>10 then
+			return "harmless"
+		elseif t.caveInMap[pPosX][pPosY]>9 then
+			return "watch your step"
+		elseif t.caveInMap[pPosX][pPosY]>8 then
+			return "medium risk"
+		elseif t.caveInMap[pPosX][pPosY]>7 then
+			return "DANGER!"
+		else
+			return "unknown"
+		end
+	end
+	
+	t.caveIn = function(x,y)
+		local objectsList = objects.getFromPosition(x,y)
+		t.caveIns = t.caveIns+1
+		if objects.getPlayer().posX ==x and objects.getPlayer().posY == y then
+			love.ism.setGameState(love.ism.gameStates["game_over"])
+		end
+		for obj in pairs(objectsList) do
+			if obj.objectType == 5 or obj.objectType == 6 then
+				obj.visible = true
 			end
 		end
 	end

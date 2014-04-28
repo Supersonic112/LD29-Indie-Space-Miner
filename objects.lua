@@ -55,6 +55,7 @@ function objects.addObject(objType, objVisible, objName, xPos, yPos, passability
 				end
 			else
 				t.visible = false
+				love.ism.game.area.watchEnvironment()
 				if t.drops ~= nil then
 					for _,dr in pairs(t.drops) do
 						objects.getObject(dr).visible = true
