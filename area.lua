@@ -185,6 +185,7 @@ function getArea(sizeX, sizeY)
 		local objectsList = objects.getFromPosition(x,y)
 		t.caveIns = t.caveIns+1
 		if objects.getPlayer().posX ==x and objects.getPlayer().posY == y then
+			love.ism.lastEndReason = 1
 			love.ism.setGameState(love.ism.gameStates["game_over"])
 		else
 			objects.addObject(5, true, "wall", x, y, false, true)

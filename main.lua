@@ -17,6 +17,8 @@ function love.load()
 	love.ism.game = getGame()
 	love.ism.titleScreen = love.graphics.newImage("res/gfx/obj/title_screen.png")
 	love.ism.highScores = {}
+	love.ism.endReasons = {"You were buried under tons of rock during a cave-in.", "You caused too many cave-ins for the asteroid to sustain \n so you had to escape before being buried alive.", "After a hard day on the asteroid you\n returned safely to the transport elevator."}
+	love.ism.lastEndReason = 0
 end
 
 function love.run()
@@ -67,6 +69,7 @@ end
 
 function love.ism.restartGame()
 	love.load()
+	love.ism.lastEndReason = 0
 	objects.resetList()
 	love.ism.setGameState(1)
 	love.ism.game = nil
@@ -85,6 +88,7 @@ function love.update(dt)
 		executeKeyActions()
 		love.ism.game.area.playerPassiveInteract()
 		if love.ism.game.area.caveIns >10 then
+			love.ism.lastEndReason = 2
 			love.ism.setGameState(love.ism.gameStates["game_over"])
 		end
 	elseif dtotal >=0.2 then
